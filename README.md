@@ -1,218 +1,77 @@
-# 🌍 Travel Itinerary Generator
+# ✈️ RoamAI — Intelligent Travel Itinerary & Trip Planner
 
-> An **AI-powered travel planning platform** that generates personalized multi-day itineraries using Django DRF, Celery background tasks, Redis, and Google Gemini — with a React.js frontend for seamless travel planning.
+> An automated AI travel planning platform that generates personalized, multi-day itineraries and destination recommendations using Django, Celery, Redis, and Google Gemini — paired with an interactive React.js interface.
 
-[![Python](https://img.shields.io/badge/Python-3.11-blue?logo=python)](https://python.org)
-[![Django](https://img.shields.io/badge/Django-4.x-green?logo=django)](https://djangoproject.com)
-[![Celery](https://img.shields.io/badge/Celery-5.x-37814A?logo=celery)](https://docs.celeryq.dev)
-[![Redis](https://img.shields.io/badge/Redis-7.x-red?logo=redis)](https://redis.io)
-[![React](https://img.shields.io/badge/React-18-61DAFB?logo=react)](https://reactjs.org)
-[![Gemini](https://img.shields.io/badge/Gemini-AI-blue?logo=google)](https://deepmind.google/gemini)
-[![License](https://img.shields.io/badge/License-MIT-lightgrey)](LICENSE)
+![Python](https://img.shields.io/badge/Python-3.12-3776AB?logo=python&logoColor=white)
+![Django](https://img.shields.io/badge/Django-5.1-092E20?logo=django&logoColor=white)
+![Celery](https://img.shields.io/badge/Celery-5.4-37814A?logo=celery&logoColor=white)
+![Redis](https://img.shields.io/badge/Redis-7.0-DC382D?logo=redis&logoColor=white)
+![Gemini](https://img.shields.io/badge/Gemini-1.5%20Pro-4285F4?logo=google-gemini&logoColor=white)
+![React](https://img.shields.io/badge/React-19-20232A?logo=react&logoColor=61DAFB)
+![License](https://img.shields.io/badge/License-MIT-success)
 
 ---
 
 ## 🚀 Features
 
-- **AI Itinerary Generation** — Generates personalized day-by-day travel plans using Google Gemini
-- **Async Task Processing** — Celery workers handle long-running AI generation without blocking the API
-- **Real-Time Status Polling** — Frontend polls task status via REST API until itinerary is ready
-- **Redis Task Queue** — Reliable task brokering and result caching with Redis
-- **Django REST Framework** — Robust, versioned REST API with serializers and viewsets
-- **React.js Frontend** — Interactive UI to input preferences and view generated itineraries
-- **Customizable Plans** — Supports budget, duration, travel style, and destination preferences
+- **Personalized Multi-Day Schedules** — Generates complete itineraries customized by travel dates, budget tier, pace, and interests.
+- **Celery Async Task Queues** — Decouples long-running LLM generation into background worker jobs, keeping user requests instant and non-blocking.
+- **Geographic Clustering & Pacing** — Groups daily activities geographically to minimize travel time and optimize sightseeing flow.
+- **Live Task Status Polling** — Frontend polls Celery task states in real-time with visual loading indicators and instant rendering upon completion.
+- **Redis Response Caching** — Caches destination metadata and popular travel queries to minimize latency and API consumption.
+- **Interactive Day-by-Day Cards** — Modular UI cards displaying morning, afternoon, and evening recommendations with dining spots.
 
 ---
 
 ## 🛠️ Tech Stack
 
-| Layer | Technology |
-|-------|------------|
-| **Backend** | Django 4.x, Django REST Framework |
-| **Task Queue** | Celery 5.x |
-| **Broker / Cache** | Redis 7 |
-| **AI / LLM** | Google Gemini API |
-| **Frontend** | React.js 18 |
-| **Auth** | JWT (djangorestframework-simplejwt) |
-| **Deployment** | Docker, Docker Compose |
+| Layer | Technology | Purpose |
+|-------|------------|---------|
+| **Backend API** | Django 5.1, DRF | REST endpoints, itinerary persistence, auth |
+| **Task Queue** | Celery 5.4, Redis | Asynchronous background workers |
+| **AI / Generation**| Google Gemini 1.5 Pro | Multi-shot itinerary generation |
+| **Frontend** | React 19, Tailwind CSS | Trip form, status polling, itinerary cards |
+| **Database** | SQLite / PostgreSQL | Saved itineraries & user profiles |
 
 ---
 
-## 🏗️ Architecture
+## ⚡ Quick Start
 
-```
-┌──────────────┐    REST API     ┌─────────────────────┐
-│  React.js UI │ ──────────────► │  Django REST API     │
-│  (Plan Form) │ ◄── Task ID ─── │  (DRF ViewSets)      │
-└──────┬───────┘                 └──────────┬───────────┘
-       │ Poll /task/{id}                    │ Enqueue
-       │                         ┌──────────▼──────────┐
-       │                         │   Redis Task Queue   │
-       │                         └──────────┬───────────┘
-       │                                    │ Execute
-       │                         ┌──────────▼──────────┐
-       │                         │   Celery Worker      │
-       │                         │  (tasks.py)          │
-       │                         └──────────┬───────────┘
-       │                                    │ Call
-       │                         ┌──────────▼──────────┐
-       └─────── Itinerary ────── │   Google Gemini API  │
-                                 └─────────────────────┘
-```
-
----
-
-## 📁 Project Structure
-
-```
-travel-itinerary-generator/
-├── backend/
-│   ├── itinerary/
-│   │   ├── tasks.py            # Celery async tasks (AI generation)
-│   │   ├── views.py            # DRF ViewSets and API logic
-│   │   ├── serializers.py      # DRF serializers
-│   │   ├── models.py           # Trip, Itinerary, Day models
-│   │   └── urls.py             # API URL routing
-│   ├── config/
-│   │   ├── celery.py           # Celery app configuration
-│   │   └── settings.py
-│   └── requirements.txt
-├── frontend/
-│   ├── src/
-│   │   ├── components/         # TripForm, ItineraryView, StatusPoller
-│   │   └── App.jsx
-│   └── package.json
-├── docker-compose.yml
-└── README.md
-```
-
----
-
-## ⚙️ Getting Started
-
-### Prerequisites
-- Python 3.11+
-- Node.js 18+
-- Redis 7+
-- Google Gemini API Key ([Get one here](https://aistudio.google.com/app/apikey))
-- Docker & Docker Compose (optional)
-
-### 1. Clone the Repository
 ```bash
 git clone https://github.com/Rushi-code1/travel-itinerary-generator.git
 cd travel-itinerary-generator
-```
 
-### 2. Backend Setup
-```bash
+# Backend
 cd backend
 python -m venv venv
-source venv/bin/activate  # Windows: venv\Scripts\activate
+venv\Scripts\activate
 pip install -r requirements.txt
-
-# Configure environment
-cp .env.example .env
-# Set GEMINI_API_KEY, REDIS_URL, SECRET_KEY
-
 python manage.py migrate
+
+# Start Celery & Redis
+celery -A core worker --loglevel=info
 python manage.py runserver
-```
 
-### 3. Start Celery Worker
-```bash
-# In a separate terminal
-celery -A config worker --loglevel=info
-```
-
-### 4. Frontend Setup
-```bash
-cd frontend
+# Frontend
+cd ../frontend
 npm install
 npm run dev
 ```
 
-### 5. Or Use Docker Compose (Recommended)
-```bash
-docker-compose up --build
-```
-
 ---
 
-## 🧪 Running Tests
-```bash
-cd backend
-pytest -v
-```
+## 👨‍💻 Author & Connect
 
----
+**Rushikesh Deshmukh**  
+*Full Stack Developer & AI Engineer*
 
-## 📡 API Endpoints
-
-| Method | Endpoint | Description |
-|--------|----------|-------------|
-| `POST` | `/api/trips/generate/` | Submit trip preferences → returns task ID |
-| `GET` | `/api/tasks/{task_id}/` | Poll task status and result |
-| `GET` | `/api/trips/{id}/` | Retrieve saved itinerary |
-| `POST` | `/auth/token/` | Get JWT access token |
-
-### Example: Generate Itinerary
-```bash
-curl -X POST http://localhost:8000/api/trips/generate/ \
-  -H "Authorization: Bearer <token>" \
-  -H "Content-Type: application/json" \
-  -d '{
-    "destination": "Goa, India",
-    "duration_days": 5,
-    "budget": "medium",
-    "travel_style": "adventure"
-  }'
-```
-
-**Response:**
-```json
-{
-  "task_id": "d5f2a3b1-...",
-  "status": "PENDING",
-  "poll_url": "/api/tasks/d5f2a3b1-.../"
-}
-```
-
-**Poll Response (when ready):**
-```json
-{
-  "status": "SUCCESS",
-  "itinerary": {
-    "destination": "Goa, India",
-    "days": [
-      {
-        "day": 1,
-        "title": "Arrival & North Goa Beaches",
-        "activities": ["Calangute Beach", "Fort Aguada", "Sunset at Anjuna"]
-      }
-    ]
-  }
-}
-```
-
----
-
-## 🔑 Key Implementation Highlights
-
-- **`tasks.py`** — Celery tasks using `@app.task` with retry logic, Gemini API calls, and Redis result storage
-- **`views.py`** — DRF `APIView` for trip submission + async task dispatch
-- **`celery.py`** — Celery app configured with Redis broker and result backend
-- Long-running AI generation is fully **non-blocking** — API returns immediately with a task ID
-
----
-
-## 👨‍💻 Author
-
-**Rushikesh Sunil Deshmukh**  
-[![LinkedIn](https://img.shields.io/badge/LinkedIn-Connect-blue?logo=linkedin)](https://linkedin.com/in/rushikesh-sunil-deshmukh)
-[![Portfolio](https://img.shields.io/badge/Portfolio-Visit-green)](https://rushi-code1.github.io/portfolio2/)
-[![GitHub](https://img.shields.io/badge/GitHub-Follow-black?logo=github)](https://github.com/Rushi-code1)
+[![LinkedIn](https://img.shields.io/badge/LinkedIn-Rushikesh_Deshmukh-0A66C2?logo=linkedin&logoColor=white)](https://linkedin.com/in/rushikesh-sunil-deshmukh)
+[![GitHub](https://img.shields.io/badge/GitHub-Rushi--code1-181717?logo=github&logoColor=white)](https://github.com/Rushi-code1)
+[![Portfolio](https://img.shields.io/badge/Portfolio-Live_Site-6366F1?logo=google-chrome&logoColor=white)](https://rushi-code1.github.io/portfolio2/)
+[![Email](https://img.shields.io/badge/Email-rushikesh.deshmukh1103%40gmail.com-EA4335?logo=gmail&logoColor=white)](mailto:rushikesh.deshmukh1103@gmail.com)
 
 ---
 
 ## 📄 License
-This project is licensed under the MIT License.
+
+This project is licensed under the **MIT License** — see the [LICENSE](LICENSE) file for details.
